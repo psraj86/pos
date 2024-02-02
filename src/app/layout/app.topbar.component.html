@@ -1,0 +1,90 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img
+            src="assets/layout/images/{{
+                layoutService.config().colorScheme === 'light'
+                    ? 'logo-dark'
+                    : 'logo-white'
+            }}.svg"
+            alt="logo"
+        />
+        <span>POINT OF SALE</span>
+    </a>
+
+    <!-- <button
+        #menubutton
+        class="p-link layout-menu-button layout-topbar-button"
+        (click)="layoutService.onMenuToggle()"
+    >
+        <i class="pi pi-bars"></i>
+    </button> -->
+    @if(showDashboard()){
+
+    <button
+        #menubutton
+        class="p-link layout-menu-button flex gap-1 text-xl"
+        [routerLink]="'/dashboard'"
+        [routerLinkActive]="'active'"
+    >
+        <i style="font-size: 1.25rem" class="pi pi-chart-bar"></i>
+        <span>Dashboard</span>
+    </button>
+    }
+
+    <button
+        #menubutton
+        class="p-link layout-menu-button flex gap-1 text-xl"
+        [routerLink]="'/product'"
+        [routerLinkActive]="'active'"
+    >
+        <i style="font-size: 1.25rem" class="pi pi-cart-plus"></i>
+        <span>Products</span>
+    </button>
+
+    <button
+        #menubutton
+        class="p-link layout-menu-button flex gap-1 text-xl"
+        [routerLink]="'/orders'"
+        [routerLinkActive]="'active'"
+    >
+        <i style="font-size: 1.25rem" class="pi pi-users"></i>
+        <span>Orders</span>
+    </button>
+
+    <button
+        #menubutton
+        class="p-link layout-menu-button flex gap-1 text-xl"
+        [routerLink]="'/profile'"
+        [routerLinkActive]="'active'"
+    >
+        <i style="font-size: 1.25rem" class="pi pi-user"></i>
+        <span>Profile</span>
+    </button>
+
+    <button
+        #topbarmenubutton
+        class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()"
+    >
+        <i style="font-size: 1.25rem" class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div
+        #topbarmenu
+        class="layout-topbar-menu"
+        [ngClass]="{
+            'layout-topbar-menu-mobile-active':
+                layoutService.state.profileSidebarVisible
+        }"
+    >
+        <button
+            class="p-link layout-topbar-button"
+            pButton
+            (click)="signOut()"
+            pTooltip="Confirm to proceed"
+        >
+            <i class="pi pi-sign-out"></i>
+            <span>Sign Out</span>
+        </button>
+    </div>
+</div>
