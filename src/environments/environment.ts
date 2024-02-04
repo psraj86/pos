@@ -4,7 +4,8 @@
 
 export const environment = {
     production: false,
-    url: 'http://customerservice-lb-332752347.us-east-1.elb.amazonaws.com/v1/api',
+    //url: 'http://customerservice-lb-332752347.us-east-1.elb.amazonaws.com/v1/api',
+    url: 'http://localhost:3000',
 };
 
 /*

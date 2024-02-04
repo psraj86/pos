@@ -20,12 +20,22 @@ export class UserService {
     updateUserByAdmin() {}
 
     getUserProfile(username: string) {
-        const url = `${this.BASE_URL}/profile/${username}`;
+        const url = `${this.BASE_URL}/customer/profile/${username}`;
         const access_token = localStorage.getItem('access_token');
         const headers = new HttpHeaders({
             Authorization: `${access_token}`,
             'Content-Type': 'application/json',
         });
         return this.http.get(url, { headers });
+    }
+
+    updateUser(user: any, username: string) {
+        const url = `${this.BASE_URL}/customer/profile/${username}`;
+        const access_token = localStorage.getItem('access_token');
+        const headers = new HttpHeaders({
+            Authorization: `${access_token}`,
+            'Content-Type': 'application/json',
+        });
+        return this.http.put(url, JSON.stringify(user), { headers });
     }
 }

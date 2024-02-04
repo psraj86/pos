@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DataViewModule } from 'primeng/dataview';
 import { PickListModule } from 'primeng/picklist';
@@ -43,6 +43,7 @@ import { TooltipModule } from 'primeng/tooltip';
         InputGroupModule,
         InputGroupAddonModule,
         TooltipModule,
+        ReactiveFormsModule,
     ],
     declarations: [ProfileComponent],
 })

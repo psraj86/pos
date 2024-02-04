@@ -43,7 +43,7 @@ export class LoginComponent {
         this.authService.signIn(credential).subscribe((res) => {
             localStorage.setItem('access_token', res.access_token);
             const user = this.jwtService.decode(res.access_token);
-            if (user['user'].roles.includes('ROLE_ADMIN')) {
+            if (user.role == 'ROLE_ADMIN') {
                 this.router.navigate(['/dashboard']);
             } else {
                 this.router.navigate(['/product']);

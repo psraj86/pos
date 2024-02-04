@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AddressService } from '../../service/address.service';
 import { JsonWebTokenService } from '../../service/json-web-token.service';
 import { UserService } from '../../service/user.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-profile',
@@ -15,71 +16,54 @@ export class ProfileComponent {
     jwtService = inject(JsonWebTokenService);
     userService = inject(UserService);
     addressService = inject(AddressService);
-
+    fb = inject(FormBuilder);
+    addressForm!: FormGroup;
     user: any;
     firstName: string = '';
     lastName: string = '';
+
     ngOnInit(): void {
-        //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-        //Add 'implements OnInit' to the class.
-        const token = this.jwtService.getToken();
-        const loggedInUser = this.jwtService.decode(token);
-        const username = loggedInUser['user'].username;
-        console.log(username);
-        // this.addressService
-        //     .addAddress(username)
-        //     .subscribe((address) => console.log(address));
-        this.userService
-            .getUserProfile(username)
-            .subscribe((res) => (this.user = res));
+        this.getUserProfile();
     }
-    // user = {
-    //     userName: 'one',
-    //     firstName: 'one',
-    //     lastName: 'second',
-    //     address: [
-    //         {
-    //             addressId: 6,
-    //             street: '283 P II floor',
-    //             city: 'Gurgaon',
-    //             state: 'Haryana',
-    //             country: 'India',
-    //             zipcode: 122002,
-    //         },
-    //         {
-    //             addressId: 7,
-    //             street: '283 P II floor',
-    //             city: 'Gurgaon',
-    //             state: 'Haryana',
-    //             country: 'India',
-    //             zipcode: 122002,
-    //         },
-    //         {
-    //             addressId: 8,
-    //             street: '283 P II floor',
-    //             city: 'Gurgaon',
-    //             state: 'Haryana',
-    //             country: 'India',
-    //             zipcode: 122002,
-    //         },
-    //         {
-    //             addressId: 9,
-    //             street: '283 P II floor',
-    //             city: 'Gurgaon',
-    //             state: 'Haryana',
-    //             country: 'India',
-    //             zipcode: 122002,
-    //         },
-    //         {
-    //             addressId: 10,
-    //             street: '283 P II floor',
-    //             city: 'Gurgaon',
-    //             state: 'Haryana',
-    //             country: 'India',
-    //             zipcode: 122002,
-    //         },
-    //     ],
-    // };
+    getUserProfile() {
+        const token = this.jwtService.getToken();
+        const { username } = this.jwtService.decode(token);
+
+        this.userService.getUserProfile(username).subscribe((res) => {
+            this.user = res;
+            this.firstName = this.user.firstName;
+            this.lastName = this.user.lastName;
+        });
+    }
+    updateUserData(updatedUser: any) {
+        this.userService
+            .updateUser(updatedUser, this.user.username)
+            .subscribe((res) => {
+                this.visible = false;
+                this.getUserProfile();
+            });
+    }
+
+    createAddressForm() {
+        this.addressForm = this.fb.group({
+            street: [''],
+            city: [''],
+            state: [''],
+            country: [''],
+            zipcode: [''],
+        });
+    }
+    saveAddress() {
+        const address = { ...this.addressForm.value, userId: this.user['_id'] };
+        if (this.selectedAddress?._id) {
+            this.updateAddress(this.selectedAddress._id, address);
+        } else {
+            this.addAddress(address);
+        }
+    }
+    resetForm() {
+        this.addressForm.reset();
+    }
 
     openUserModifyDialog() {
         this.visible = true;
@@ -89,11 +73,34 @@ export class ProfileComponent {
         this.visible = false;
     }
 
-    updateAddress(username: string, addressId: number) {
-        this.addressService.updateAddressById(username, addressId);
+    addAddress(address) {
+        this.addressService.addAddress(address).subscribe((res) => {
+            this.visibleAddressDialog = false;
+            this.getUserProfile();
+        });
     }
 
-    openAddressDialog() {
+    updateAddress(id: string, address: any) {
+        this.addressService.updateAddressById(id, address).subscribe((res) => {
+            this.visibleAddressDialog = false;
+            this.selectedAddress = null;
+            this.getUserProfile();
+        });
+    }
+
+    openAddressDialog(type?: string) {
+        this.createAddressForm();
+        setTimeout(() => {
+            if (type === 'edit') {
+                this.addressForm.patchValue({ ...this.selectedAddress });
+            }
+        });
         this.visibleAddressDialog = true;
+    }
+
+    deleteAddress(id: string) {
+        this.addressService.deleteAddress(id).subscribe((res) => {
+            this.getUserProfile();
+        });
     }
 }

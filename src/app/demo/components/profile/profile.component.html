@@ -15,9 +15,12 @@
                         alt="Image"
                     />
 
-                    <span class="text-2xl">Praveen Singh</span>
+                    <span class="text-2xl"
+                        >{{ user?.firstName | uppercase }}
+                        {{ user?.lastName | uppercase }}</span
+                    >
                     <div class="flex flex-column">
-                        <span class="text-xl">Peter Singh</span>
+                        <span class="text-xl">{{ user?.username }}</span>
                         <span class="text-xs">username</span>
                     </div>
                     <p-button
@@ -37,9 +40,8 @@
                     [rounded]="true"
                     (click)="openAddressDialog()"
                 ></p-button>
-
                 <p-listbox
-                    [options]="user?.address"
+                    [options]="user?.addresses"
                     [(ngModel)]="selectedAddress"
                     optionLabel="name"
                     [listStyle]="{ 'max-height': '250px' }"
@@ -78,18 +80,14 @@
                                     [rounded]="true"
                                     [text]="true"
                                     severity="secondary "
-                                    (click)="
-                                        updateAddress(
-                                            user?.userName,
-                                            address?.addressId
-                                        )
-                                    "
+                                    (click)="openAddressDialog('edit')"
                                 ></p-button>
                                 <p-button
                                     icon="pi pi-trash text-2xl text-red-700"
                                     [rounded]="true"
                                     [text]="true"
                                     severity="secondary "
+                                    (click)="deleteAddress(address._id)"
                                 ></p-button>
                             </div>
                         </div>
@@ -101,7 +99,7 @@
 </div>
 
 <p-dialog
-    header="Header"
+    header="Modify User"
     [(visible)]="visible"
     [modal]="true"
     [style]="{ width: '30vw' }"
@@ -141,7 +139,7 @@
     <ng-template pTemplate="footer">
         <p-button
             icon="pi pi-check"
-            (click)="updateUser()"
+            (click)="updateUserData({firstName,lastName})"
             label="Update User"
             pAutoFocus
             [autofocus]="true"
@@ -151,61 +149,91 @@
 
 <!-- Add Address Dialog-->
 <p-dialog
-    header="Header"
+    [header]="'Address'"
     [(visible)]="visibleAddressDialog"
     [modal]="true"
     [style]="{ width: '30vw' }"
+    (onHide)="resetForm()"
 >
-    <ng-template pTemplate="header">
-        <div
-            class="inline-flex align-items-center justify-content-center gap-2"
-        >
-            <span class="font-bold white-space-nowrap">Add Address</span>
-        </div>
-    </ng-template>
-    <p class="m-0 flex flex-column gap-3">
-        <p-inputGroup>
-            <p-inputGroupAddon>
-                <i class="pi pi-globe"></i>
-            </p-inputGroupAddon>
-            <input pInputText placeholder="Street" />
-        </p-inputGroup>
+    <div *ngIf="visibleAddressDialog">
+        <form [formGroup]="addressForm">
+            <ng-template pTemplate="header">
+                <div
+                    class="inline-flex align-items-center justify-content-center gap-2"
+                >
+                    <span class="font-bold white-space-nowrap"
+                        >Add Address</span
+                    >
+                </div>
+            </ng-template>
+            <p class="m-0 flex flex-column gap-3">
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-globe"></i>
+                    </p-inputGroupAddon>
+                    <input
+                        pInputText
+                        placeholder="Street"
+                        formControlName="street"
+                    />
+                </p-inputGroup>
 
-        <p-inputGroup>
-            <p-inputGroupAddon>
-                <i class="pi pi-globe"></i>
-            </p-inputGroupAddon>
-            <input type="text" pInputText placeholder="City" />
-        </p-inputGroup>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-globe"></i>
+                    </p-inputGroupAddon>
+                    <input
+                        type="text"
+                        pInputText
+                        placeholder="City"
+                        formControlName="city"
+                    />
+                </p-inputGroup>
 
-        <p-inputGroup>
-            <p-inputGroupAddon>
-                <i class="pi pi-globe"></i>
-            </p-inputGroupAddon>
-            <input type="text" pInputText placeholder="State" />
-        </p-inputGroup>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-globe"></i>
+                    </p-inputGroupAddon>
+                    <input
+                        type="text"
+                        pInputText
+                        placeholder="State"
+                        formControlName="state"
+                    />
+                </p-inputGroup>
 
-        <p-inputGroup>
-            <p-inputGroupAddon>
-                <i class="pi pi-globe"></i>
-            </p-inputGroupAddon>
-            <input type="text" pInputText placeholder="Country" />
-        </p-inputGroup>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-globe"></i>
+                    </p-inputGroupAddon>
+                    <input
+                        type="text"
+                        pInputText
+                        placeholder="Country"
+                        formControlName="country"
+                    />
+                </p-inputGroup>
 
-        <p-inputGroup>
-            <p-inputGroupAddon>
-                <i class="pi pi-globe"></i>
-            </p-inputGroupAddon>
-            <input type="text" pInputText placeholder="Zipcode" />
-        </p-inputGroup>
-    </p>
-    <ng-template pTemplate="footer">
-        <p-button
-            icon="pi pi-check"
-            (click)="updateUser()"
-            label="Save Address"
-            pAutoFocus
-            [autofocus]="true"
-        ></p-button>
-    </ng-template>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-globe"></i>
+                    </p-inputGroupAddon>
+                    <input
+                        type="text"
+                        pInputText
+                        placeholder="Zipcode"
+                        formControlName="zipcode"
+                    />
+                </p-inputGroup>
+                <p-button
+                    icon="pi pi-check"
+                    label="Save Address"
+                    pAutoFocus
+                    [autofocus]="true"
+                    (click)="saveAddress()"
+                ></p-button>
+            </p>
+            <ng-template pTemplate="footer"> </ng-template>
+        </form>
+    </div>
 </p-dialog>

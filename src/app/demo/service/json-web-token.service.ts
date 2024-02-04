@@ -8,13 +8,13 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class JsonWebTokenService {
     user = new BehaviorSubject(null);
-    
+
     decode(accessToken: string) {
         const user = jwt.jwtDecode(accessToken);
-        return user;
+        return user['_doc'];
     }
 
-    getToken(){
-        return localStorage.getItem("access_token");
+    getToken() {
+        return localStorage.getItem('access_token');
     }
 }
